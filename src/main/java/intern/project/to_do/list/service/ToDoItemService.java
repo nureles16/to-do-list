@@ -2,6 +2,7 @@ package intern.project.to_do.list.service;
 
 import intern.project.to_do.list.entity.TaskStatus;
 import intern.project.to_do.list.entity.ToDoItem;
+import intern.project.to_do.list.exceptions.ResourceNotFoundException;
 import intern.project.to_do.list.repository.ToDoItemRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +18,7 @@ public class ToDoItemService {
     private final ToDoItemRepository repository;
 
     public ToDoItem createToDoItem(ToDoItem item) {
-        item.setCreatedDate(LocalDateTime.now()); // Set created date
+        item.setCreatedDate(LocalDateTime.now());
         return repository.save(item);
     }
 
@@ -27,7 +28,7 @@ public class ToDoItemService {
 
     public ToDoItem getToDoItemById(Long id) {
         return repository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("To-Do Item with id " + id + " not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("To-Do Item with id " + id + " not found"));
     }
 
     public ToDoItem updateToDoItem(Long id, ToDoItem updatedItem) {
@@ -43,7 +44,7 @@ public class ToDoItemService {
 
     public void deleteToDoItem(Long id) {
         if (!repository.existsById(id)) {
-            throw new EntityNotFoundException("To-Do Item with id " + id + " not found");
+            throw new ResourceNotFoundException("To-Do Item with id " + id + " not found");
         }
         repository.deleteById(id);
     }
