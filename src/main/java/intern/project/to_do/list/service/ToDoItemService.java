@@ -1,11 +1,13 @@
 package intern.project.to_do.list.service;
 
+import intern.project.to_do.list.entity.ImportanceLevel;
 import intern.project.to_do.list.entity.TaskStatus;
 import intern.project.to_do.list.entity.ToDoItem;
 import intern.project.to_do.list.exceptions.ResourceNotFoundException;
 import intern.project.to_do.list.repository.ToDoItemRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -22,8 +24,8 @@ public class ToDoItemService {
         return repository.save(item);
     }
 
-    public List<ToDoItem> getAllToDoItems() {
-        return repository.findAll();
+    public List<ToDoItem> getAllToDoItems(Sort sort) {
+        return repository.findAll(sort);
     }
 
     public ToDoItem getToDoItemById(Long id) {
@@ -51,5 +53,13 @@ public class ToDoItemService {
 
     public List<ToDoItem> getItemsByStatus(TaskStatus status) {
         return repository.findByStatus(status);
+    }
+
+    public List<ToDoItem> getItemsByDueDate(LocalDateTime dueDate) {
+        return repository.findByDueDate(dueDate);
+    }
+
+    public List<ToDoItem> getItemsByImportanceLevel(ImportanceLevel importanceLevel) {
+        return repository.findByImportanceLevel(importanceLevel);
     }
 }
