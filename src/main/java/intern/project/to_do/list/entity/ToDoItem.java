@@ -25,6 +25,11 @@ public class ToDoItem {
     private String description;
 
     @Enumerated(EnumType.STRING)
+    @NotNull(message = "Importance level is mandatory")
+    @Column(nullable = false)
+    private ImportanceLevel importanceLevel = ImportanceLevel.MEDIUM;
+
+    @Enumerated(EnumType.STRING)
     @NotNull(message = "Status is mandatory")
     @Column(nullable = false)
     private TaskStatus status = TaskStatus.NOT_STARTED;
