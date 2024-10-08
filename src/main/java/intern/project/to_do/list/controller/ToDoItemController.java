@@ -27,15 +27,10 @@ public class ToDoItemController {
     }
 
     @GetMapping
-    public List<ToDoItem> getAllToDoItems(@RequestParam(required = false, defaultValue = "id") String sortBy) {
+    public ResponseEntity<List<ToDoItem>> getAllToDoItems(@RequestParam(required = false, defaultValue = "id") String sortBy) {
         Sort sort = Sort.by(sortBy);
-        return service.getAllToDoItems(sort);
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<ToDoItem> getToDoItemById(@PathVariable Long id) {
-        ToDoItem item = service.getToDoItemById(id);
-        return new ResponseEntity<>(item, HttpStatus.OK);
+        List<ToDoItem> items = service.getActiveToDoItems();
+        return ResponseEntity.ok(items);
     }
 
     @PutMapping("/{id}")
@@ -49,14 +44,19 @@ public class ToDoItemController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
+    @PostMapping("/{id}/archive") // New endpoint for archiving
+    public ResponseEntity<Void> archiveToDoItem(@PathVariable Long id) {
+        service.archiveToDoItem(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
     @GetMapping("/status/{status}")
-    public List<ToDoItem> getItemsByStatus(@PathVariable TaskStatus status) {
-        return service.getItemsByStatus(status);
+    public ResponseEntity<List<ToDoItem>> getItemsByStatus(@PathVariable TaskStatus status) {
+        return ResponseEntity.ok(service.getItemsByStatus(status));
     }
 
     @GetMapping("/importance/{importanceLevel}")
-    public List<ToDoItem> getItemsByImportanceLevel(@PathVariable ImportanceLevel importanceLevel) {
-        return service.getItemsByImportanceLevel(importanceLevel);
+    public ResponseEntity<List<ToDoItem>> getItemsByImportanceLevel(@PathVariable ImportanceLevel importanceLevel) {
+        return ResponseEntity.ok(service.getItemsByImportanceLevel(importanceLevel));
     }
-
 }

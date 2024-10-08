@@ -8,6 +8,7 @@ import intern.project.to_do.list.repository.ToDoItemRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -61,5 +62,38 @@ public class ToDoItemService {
 
     public List<ToDoItem> getItemsByImportanceLevel(ImportanceLevel importanceLevel) {
         return repository.findByImportanceLevel(importanceLevel);
+    }
+    @Scheduled(fixedRate = 3600000)
+    public void updateOverdueTasks() {
+        LocalDateTime now = LocalDateTime.now();
+        List<ToDoItem> overdueItems = repository.findByDueDateBeforeAndStatusNot(now, TaskStatus.DONE);
+
+        overdueItems.forEach(item -> {
+            item.setStatus(TaskStatus.OVERDUE);
+            repository.save(item);
+        });
+    }
+
+    @Scheduled(fixedRate = 3600000)
+    public void warnAboutExpiringTasks() {
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime warningThreshold = now.plusHours(25);
+
+        List<ToDoItem> expiringItems = repository.findByDueDateBetween(now, warningThreshold);
+        expiringItems.forEach(item -> {
+            System.out.println("Warning: The task '" + item.getTitle() + "' is due on " + item.getDueDate());
+        });
+    }
+
+    public void archiveToDoItem(Long id) {
+        ToDoItem item = repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("To-Do Item with id " + id + " not found"));
+
+        item.setActive(false);
+        repository.save(item);
+    }
+
+    public List<ToDoItem> getActiveToDoItems() {
+        return repository.findByActiveTrue();
     }
 }
