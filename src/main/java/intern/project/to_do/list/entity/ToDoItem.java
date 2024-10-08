@@ -40,6 +40,9 @@ public class ToDoItem {
     @FutureOrPresent(message = "Due date cannot be in the past")
     private LocalDateTime dueDate;
 
+    @Column(nullable = false)
+    private boolean active = true;
+
     @PrePersist
     protected void onCreate() {
         this.createdDate = LocalDateTime.now();
