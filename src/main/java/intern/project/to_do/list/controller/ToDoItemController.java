@@ -1,52 +1,50 @@
 package intern.project.to_do.list.controller;
-
+import intern.project.to_do.list.dto.ToDoListFilterDto;
 import intern.project.to_do.list.entity.ImportanceLevel;
 import intern.project.to_do.list.entity.TaskStatus;
 import intern.project.to_do.list.entity.ToDoItem;
+import intern.project.to_do.list.facade.TodoFacade;
 import intern.project.to_do.list.service.ToDoItemService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
 @RequestMapping("/todos")
 @RequiredArgsConstructor
 public class ToDoItemController {
-
     private final ToDoItemService service;
+    private final TodoFacade todoFacade;
 
     @PostMapping
     public ResponseEntity<ToDoItem> createToDoItem(@Valid @RequestBody ToDoItem item) {
-        ToDoItem createdItem = service.createToDoItem(item);
+        ToDoItem createdItem = todoFacade.createTodoItem(item);
         return new ResponseEntity<>(createdItem, HttpStatus.CREATED);
     }
 
     @GetMapping
-    public ResponseEntity<List<ToDoItem>> getAllToDoItems(@RequestParam(required = false, defaultValue = "id") String sortBy) {
-        Sort sort = Sort.by(sortBy);
-        List<ToDoItem> items = service.getActiveToDoItems();
-        return ResponseEntity.ok(items);
+    public ResponseEntity<List<ToDoItem>> getAllToDoItems(@RequestBody ToDoListFilterDto filter) {
+        return new ResponseEntity<>(todoFacade.listTodos(filter), HttpStatus.OK);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<ToDoItem> updateToDoItem(@PathVariable Long id, @Valid @RequestBody ToDoItem item) {
-        return new ResponseEntity<>(service.updateToDoItem(id, item), HttpStatus.OK);
+        ToDoItem updatedItem = todoFacade.updateTodoItem(id, item);
+        return new ResponseEntity<>(updatedItem, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteToDoItem(@PathVariable Long id) {
-        service.deleteToDoItem(id);
+        todoFacade.deleteTodoItem(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @PostMapping("/{id}/archive") // New endpoint for archiving
+    @PostMapping("/{id}/archive")
     public ResponseEntity<Void> archiveToDoItem(@PathVariable Long id) {
-        service.archiveToDoItem(id);
+        todoFacade.archiveTodoItem(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 

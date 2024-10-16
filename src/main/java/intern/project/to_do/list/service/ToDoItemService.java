@@ -10,14 +10,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class ToDoItemService {
-
     private final ToDoItemRepository repository;
 
     public ToDoItem createToDoItem(ToDoItem item) {
@@ -67,7 +65,6 @@ public class ToDoItemService {
     public void updateOverdueTasks() {
         LocalDateTime now = LocalDateTime.now();
         List<ToDoItem> overdueItems = repository.findByDueDateBeforeAndStatusNot(now, TaskStatus.DONE);
-
         overdueItems.forEach(item -> {
             item.setStatus(TaskStatus.OVERDUE);
             repository.save(item);
@@ -78,7 +75,6 @@ public class ToDoItemService {
     public void warnAboutExpiringTasks() {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime warningThreshold = now.plusHours(25);
-
         List<ToDoItem> expiringItems = repository.findByDueDateBetween(now, warningThreshold);
         expiringItems.forEach(item -> {
             System.out.println("Warning: The task '" + item.getTitle() + "' is due on " + item.getDueDate());
@@ -88,7 +84,6 @@ public class ToDoItemService {
     public void archiveToDoItem(Long id) {
         ToDoItem item = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("To-Do Item with id " + id + " not found"));
-
         item.setActive(false);
         repository.save(item);
     }
