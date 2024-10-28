@@ -24,6 +24,7 @@ public class ToDoItemService {
     }
 
     public List<ToDoItem> getAllToDoItems(Sort sort) {
+
         return repository.findAll(sort);
     }
 

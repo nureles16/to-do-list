@@ -15,4 +15,5 @@ public interface ToDoItemRepository extends JpaRepository<ToDoItem, Long> {
     List<ToDoItem> findByDueDateBeforeAndStatusNot(LocalDateTime dueDate, TaskStatus status);
     List<ToDoItem> findByDueDateBetween(LocalDateTime startDate, LocalDateTime endDate);
     List<ToDoItem> findByActiveTrue();
+    List<ToDoItem> findAllByStatusAndImportanceLevelAndActive(TaskStatus status, ImportanceLevel importanceLevel, Boolean active);
 }

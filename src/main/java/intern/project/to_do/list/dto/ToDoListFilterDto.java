@@ -9,4 +9,11 @@ public class ToDoListFilterDto {
     private ImportanceLevel importanceLevel;
     private boolean active;
     private String sortBy;
+
+    public ToDoListFilterDto() {
+        this.status = TaskStatus.NOT_STARTED;
+        this.importanceLevel = ImportanceLevel.MEDIUM;
+        this.active = true;
+        this.sortBy = "createdDate";
+    }
 }
