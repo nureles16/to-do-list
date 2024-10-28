@@ -6,7 +6,6 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 import java.time.LocalDateTime;
 
-
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
